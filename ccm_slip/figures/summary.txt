@@ -1,0 +1,28 @@
+Melting-rate enhancement/suppression relative to the smooth surface
+(conventional model = constant slip length; refined model = with
+ meniscus-curvature feedback -- see model.py for what this means)
+
+For reference, the paper (whose exact slip-length closure is not
+available to this model -- see model.py) reports, across its own
+three surfaces at the same superheat: melting enhanced by >15% on
+one grooved surface, suppressed by ~21% on another, and negligibly
+changed on a third. The three surfaces below are chosen (by this
+model's own slip-vs-film-thickness ratio) to demonstrate the same
+three qualitative regimes, not to reproduce those exact numbers.
+
+St = 0.026
+  [convent.] Enhancing (l=0.33 mm, phi=0.3)   half-melt time change:   +5.8%
+  [refined ] Enhancing (l=0.33 mm, phi=0.3)   half-melt time change:   +4.7%
+  [convent.] Moderate (l=1.23 mm, phi=0.3)    half-melt time change:  -23.0%
+  [refined ] Moderate (l=1.23 mm, phi=0.3)    half-melt time change:   +5.6%
+  [convent.] Suppressing (l=1.27 mm, phi=0.5) half-melt time change:  -67.3%
+  [refined ] Suppressing (l=1.27 mm, phi=0.5) half-melt time change:  -20.5%
+
+St = 0.051
+  [convent.] Enhancing (l=0.33 mm, phi=0.3)   half-melt time change:   +6.3%
+  [refined ] Enhancing (l=0.33 mm, phi=0.3)   half-melt time change:   +4.2%
+  [convent.] Moderate (l=1.23 mm, phi=0.3)    half-melt time change:  -16.4%
+  [refined ] Moderate (l=1.23 mm, phi=0.3)    half-melt time change:   +6.5%
+  [convent.] Suppressing (l=1.27 mm, phi=0.5) half-melt time change:  -62.0%
+  [refined ] Suppressing (l=1.27 mm, phi=0.5) half-melt time change:  -14.1%
+
