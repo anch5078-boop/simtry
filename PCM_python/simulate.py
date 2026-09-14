@@ -78,15 +78,21 @@ def find_min_power(P: Params, grid: Grid, is_cu, p_lo=0.0, p_hi=None,
     return hi, T_end
 
 
-def run_full_melt(P: Params, grid: Grid, is_cu, P_peak, record_every=30, store_snapshots=False):
+def run_full_melt(P: Params, grid: Grid, is_cu, P_peak, record_every=30,
+                   store_snapshots=False, T_setpoint=None):
     """Full transient simulation: bang-bang thermostat holds the sleeve
-    at P.Tm (heater ON at P_peak while volume-avg sleeve T < Tm, OFF
-    otherwise) while the pipe boundary sits fixed at T_hotwater
-    throughout. Returns a dict of time histories and t50/t90/t99/t999
-    (99.9%) melt milestones based on the volume-weighted average PCM
-    liquid fraction. If store_snapshots, also returns full T(r) and
-    fl(r) profiles at each recorded step (for temperature-profile
-    plots)."""
+    at T_setpoint (heater ON at P_peak while volume-avg sleeve T <
+    T_setpoint, OFF otherwise) while the pipe boundary sits fixed at
+    T_hotwater throughout. T_setpoint defaults to P.Tm (the efficiency-
+    oriented "lowest power to just reach/hold the melt point" rule);
+    pass a higher value (or np.inf, i.e. always-on) for a speed-oriented
+    "run the sleeve as hard as the supply allows" case. Returns a dict
+    of time histories and t50/t90/t99/t999 (99.9%) melt milestones based
+    on the volume-weighted average PCM liquid fraction. If
+    store_snapshots, also returns full T(r) and fl(r) profiles at each
+    recorded step (for temperature-profile plots)."""
+    if T_setpoint is None:
+        T_setpoint = P.Tm
     mat = P.material_dict()
     N = grid.n
     is_pcm = ~is_cu
@@ -108,7 +114,7 @@ def run_full_melt(P: Params, grid: Grid, is_cu, P_peak, record_every=30, store_s
     for step in range(1, n_steps + 1):
         if has_sleeve:
             T_sleeve_now = _volume_avg(T, V, is_cu)
-            on = T_sleeve_now < P.Tm
+            on = T_sleeve_now < T_setpoint
         else:
             on = False
         P_applied = P_peak if on else 0.0

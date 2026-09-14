@@ -143,6 +143,81 @@ Reproducing this or trying other geometries/materials: edit
 | `simulate.py` | Build a case, bisect for the minimum sleeve peak power, run the full bang-bang-controlled melt simulation |
 | `sweep.py` | Sleeve-position sweep; no-sleeve reference case |
 | `main.py` | Driver: runs baseline + reference + sweep, writes plots/CSV/summary |
+| `fast_melt_design.py` | Re-dimensions the annulus for <3-minute melting (see "Fast-melt design" below) |
+
+## Fast-melt design: melting in under 3 minutes
+
+`fast_melt_design.py` (`python3 fast_melt_design.py`) answers a
+follow-up question: **re-dimension the same architecture (pipe + PCM +
+pulsed copper sleeve + PCM + insulated wall) so the whole charge melts
+in under 180 s**, keeping the pipe radius and PCM material fixed.
+
+**Why this needs a real redesign, not a tweak:** conduction time
+through a low-conductivity PCM (k≈0.2 W/m·K) scales with the *square*
+of the distance heat has to travel. The original 32.3 mm gap took
+2.3–3.5 h to melt; getting under 3 minutes needs a length scale
+roughly `sqrt(170/8500) ≈ 1/7` of that, i.e. a few mm to ~1 cm, not
+tens of mm. This is a real, physical constraint of any conduction-only
+PCM system with this material — not a numerical artifact — so the
+"optimization" is mostly about how much annulus thickness (= usable
+PCM thermal-storage volume) can be kept while still clearing the
+3-minute bar, for a realistic sleeve power.
+
+**Method:**
+1. Sweep gap width with **no sleeve at all** (pure pipe conduction) —
+   this needs the gap down to ~4 mm to melt in <180 s unaided
+   (`fig1_gap_sweeps.png`, left panel).
+2. Sweep gap width **with** the pulsed sleeve (position re-optimized
+   for this regime — the optimum moves to ~70% of the gap, not the
+   ~85% found for the original slow case), bisecting for the minimum
+   sleeve peak power that still clears the target at each gap
+   (right panel). This quantifies how much *extra* PCM thickness the
+   sleeve buys, and at what power cost.
+3. Pick the largest gap whose required power stays under a "realistic"
+   cap (2 kW/m — a few hundred W over a practical ≤0.5 m pipe section,
+   well within a compact resistive cartridge heater or induction
+   coil), add 5% power margin, and verify on a finer grid.
+
+**Recommended fast-melt dimensions:**
+
+| Quantity | Value |
+|---|---|
+| Pipe radius (fixed, given) | 12.7 mm |
+| **PCM annulus gap width** | **12 mm** (was 32.3 mm) |
+| Container inner radius | 24.7 mm (was 45 mm) |
+| Copper sleeve thickness | 1.0 mm, at 70% of the gap (20.6–21.6 mm) |
+| Sleeve pulse power | **1700 W/m** of pipe length (≈510 W over 0.3 m) |
+| Sleeve safety cutoff | 180 °C (well below paraffin decomposition, ~200–250 °C) |
+| **Result** | **fully melted in 167 s (2.8 min)**, vs. the 180 s target |
+
+At this gap, pipe conduction *alone* (no sleeve) only reaches ~40%
+melted by 400 s and would take well over 15–20 minutes to finish —
+the sleeve is not optional at this size, it is what makes the
+3-minute target reachable at all while keeping a non-trivial (12 mm)
+PCM layer. Note also the operating character changes from the
+"efficiency" case above: to melt this fast, the sleeve runs at
+**continuous full power** for essentially the whole transient (it
+never reaches its 180 °C safety cutoff within 167 s — see
+`fig4_sleeve_pulsing.png`) rather than duty-cycling on/off. "Pulsed" in
+this design just means "thermostatically capped for safety," not
+"low-duty-cycle," because the objective is now speed, not standby
+efficiency.
+
+If 1.7 kW/m is uncomfortably high for the actual hardware, the gap-vs-
+power tradeoff table in `results_fast_melt/sleeve_sweep.csv` gives
+cheaper options at a smaller gap (e.g. ~10 mm gap only needs ~1.0 kW/m,
+~8 mm needs ~0.6 kW/m) — all still comfortably under the 3-minute
+target with margin. Edit `REALISTIC_POWER_CAP`, `TARGET_S`,
+`T_SAFETY_CAP` or the PCM dataset at the top of `fast_melt_design.py`
+/ in `params.py` and rerun to fit an actual heater's power budget.
+
+Output files (`results_fast_melt/`): `fig1_gap_sweeps.png` (the two
+tradeoff curves), `fig2_liquid_fraction.png` (melt curve at the
+recommended gap, with/without the sleeve), `fig3_temperature_profiles.png`
+(radial snapshots — visibly two fronts, from the pipe and from the
+sleeve, meeting in the middle), `fig4_sleeve_pulsing.png` (sleeve
+temperature/power trace), `no_sleeve_sweep.csv`, `sleeve_sweep.csv`,
+`summary.json`.
 
 ## Validation
 
