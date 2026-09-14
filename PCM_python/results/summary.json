@@ -1,0 +1,36 @@
+{
+  "params": {
+    "r_pipe_mm": 12.7,
+    "r_wall_mm": 45.0,
+    "t_sleeve_mm": 1.5,
+    "T_hotwater": 120.0,
+    "Tm": 40.0,
+    "T_init": 20.0,
+    "t_ramp_target": 300.0
+  },
+  "baseline_centered": {
+    "P_min_W_per_m": 290.625,
+    "milestones": {
+      "t50": 3586.0,
+      "t90": 8862.0,
+      "t99": 10254.0,
+      "t999": 10426.0
+    },
+    "duty_cycle": 0.0665643583349319
+  },
+  "no_sleeve_reference": {
+    "milestones": {
+      "t50": 5462.0,
+      "t90": 11124.0,
+      "t99": 12630.0,
+      "t999": 12816.0
+    }
+  },
+  "optimal": {
+    "frac": 0.8500000000000001,
+    "r_mid_mm": 40.154999999999994,
+    "P_min_W_per_m": 375.0,
+    "t99": 8220.0,
+    "t999": 8404.0
+  }
+}
