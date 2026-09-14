@@ -24,13 +24,37 @@ version as `PCM_MATLAB/`).
 
 ## Quick start
 
+**One file, everything, no dependencies** — `PCM_master_simulation.m` is
+the whole model (every function plus both drivers) in a single
+self-contained file. Copy just this one file anywhere and run it:
+
+```
+octave-cli PCM_master_simulation.m
+```
+
+(or open it in MATLAB and run it directly). It runs Part 1 (the
+geometry as drawn) then Part 2 (the <3-minute redesign) and writes
+everything to `./results_master/asDrawn/` and `./results_master/fastMelt/`.
+Takes a few minutes end to end (Part 2's gap-width × power sweep is
+the slow part). To change a case, edit `parametersRadial()` near the
+top of the file (Part 1) or the `TARGET_S` / `T_SAFETY_CAP` /
+`REALISTIC_POWER_CAP` constants where Part 2's driver code begins —
+nothing else needs to change.
+
+**Or, the original multi-file layout** (same model, split into one
+function per file, `results/` and `results_fast_melt/` instead of
+`results_master/...`) if you'd rather read or edit it a function at a
+time:
+
 ```
 cd PCM_MATLAB_radial
 octave-cli mainAsDrawn.m     % as-drawn case + reference + position sweep -> results/
 octave-cli mainFastMelt.m    % re-dimensioned <3-minute design -> results_fast_melt/
 ```
 
-(or open either script in MATLAB and run it directly).
+(or open either script in MATLAB and run it directly). Both layouts
+are kept in sync and produce identical numbers — `PCM_master_simulation.m`
+was assembled directly from these files.
 
 ## The two cases
 
@@ -107,6 +131,7 @@ curves), `fig2_liquid_fraction.png`, `fig3_temperature_profiles.png`
 
 | File | Role |
 |---|---|
+| `PCM_master_simulation.m` | **Everything in one file** — every function below plus both drivers, self-contained (see "Quick start") |
 | `parametersRadial.m` | All physical/geometric/control constants (edit this to change the as-drawn case) |
 | `materialStruct.m` | Packs P into the small struct solveOneStepRadial.m needs (mushy bounds, effective rho·cp / rho·L) |
 | `sleeveRadii.m` | Inner/outer sleeve radius for a given fractional position across the gap |
