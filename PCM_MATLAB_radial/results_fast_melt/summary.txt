@@ -1,0 +1,15 @@
+target_s=180.0
+
+[recommended]
+r_pipe_mm=12.7000
+gap_mm=12
+r_wall_mm=24.7000
+sleeve_thickness_mm=1.0000
+sleeve_center_frac=0.7000
+sleeve_band_mm=20.6000-21.6000
+P_design_W_per_m=1700.0
+T_safety_cap_C=180.0
+t50=75.10
+t90=139.60
+t99=163.10
+t999=166.70
